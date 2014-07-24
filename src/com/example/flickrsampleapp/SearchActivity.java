@@ -66,9 +66,9 @@ public class SearchActivity extends Activity
 						JSONObject myObj = offersJsonArray.getJSONObject(i);
 						FlickrPhotos fOffer = gson.fromJson(myObj.toString(),FlickrPhotos.class);
 						PhotosList.add(fOffer);
+						AfterGettingResponse(fOffer.id);
 					}
-					
-					AfterGettingResponse();
+				
 			        //gridview.setAdapter(new ImageAdapter(SearchActivity.this,PhotosList));
 				} 
 				catch (JSONException e) 
@@ -90,9 +90,9 @@ public class SearchActivity extends Activity
 		mQueue.add(mReq);
     }
     
-    public void AfterGettingResponse()
+    public void AfterGettingResponse(String picId)
     {
-    	uri = "https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key=fc16fa53fb09ca43f1e5a62a5e3669cd&photo_id=14707600226&format=json&nojsoncallback=1";
+    	uri = "https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key=fc16fa53fb09ca43f1e5a62a5e3669cd&photo_id=" + picId + "&format=json&nojsoncallback=1";
     	
 		mReq = new JsonObjectRequest(Request.Method.GET, uri,null,new Response.Listener<JSONObject>() 
 		{
@@ -114,7 +114,10 @@ public class SearchActivity extends Activity
 					{
 						JSONObject myObj = offersJsonArray.getJSONObject(i);
 						FlickrActualPhoto fOffer = gson.fromJson(myObj.toString(),FlickrActualPhoto.class);
-						ActualPhotosList.add(fOffer);
+						if(fOffer.label.equals("Thumbnail"))
+						{
+							ActualPhotosList.add(fOffer);
+						}
 					}
 					
 			        gridview.setAdapter(new ImageAdapter(SearchActivity.this,ActualPhotosList));
