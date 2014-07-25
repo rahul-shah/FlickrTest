@@ -9,14 +9,16 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.ImageButton;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -144,13 +146,26 @@ public class SearchActivity extends Activity
 					{
 						JSONObject myObj = offersJsonArray.getJSONObject(i);
 						FlickrActualPhoto fOffer = gson.fromJson(myObj.toString(),FlickrActualPhoto.class);
-						if(fOffer.label.equals("Medium 800"))
+						if(fOffer.label.equals("Large"))
 						{
 							ActualPhotosList.add(fOffer);
 						}
 					}
 					
 			        gridview.setAdapter(new ImageAdapter(SearchActivity.this,ActualPhotosList));
+			        
+			        gridview.setOnItemClickListener(new OnItemClickListener()
+			        {
+			            @Override
+			            public void onItemClick(AdapterView<?> parent, View v,int position, long id) 
+			            {
+			            	Intent intent = new Intent("com.example.flickrsampleapp.ImageDetailActivity");
+			            	intent.putExtra("Image",ActualPhotosList.get(position).source);
+			            	intent.putExtra("Title",PhotosList.get(position).title);
+			            	intent.putExtra("Owner",PhotosList.get(position).owner);
+			            	startActivity(intent);
+			            }
+			        });
 				} 
 				catch (JSONException e) 
 				{
