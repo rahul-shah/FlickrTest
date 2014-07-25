@@ -8,9 +8,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageButton;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -29,6 +35,8 @@ public class SearchActivity extends Activity
 	List<FlickrPhotos> PhotosList = new ArrayList<FlickrPhotos>();
 	List<FlickrActualPhoto> ActualPhotosList = new ArrayList<FlickrActualPhoto>();
 	GridView gridview;
+	Button mBtnSearch;
+	EditText mQuery;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) 
@@ -41,7 +49,30 @@ public class SearchActivity extends Activity
         
         gridview = (GridView) findViewById(R.id.gridview);
         
-        uri = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=1a3a3ca0ceeb8f7934475f721d4dc2c4&text=squirrel&format=json&nojsoncallback=1";
+        mBtnSearch = (Button) findViewById(R.id.btn_search);
+        
+        mQuery = (EditText) findViewById(R.id.input_search_query);
+        
+        mBtnSearch.setOnClickListener(new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				Log.d("SearchFragment", "Search Clikced");
+				gridview.setAdapter(null);
+				PhotosList.clear();
+				ActualPhotosList.clear();
+				String searchString = mQuery.getText().toString();
+				InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(mQuery.getWindowToken(), 0);
+				InitiateSearch(searchString);
+			}
+		});
+    }
+    
+    public void InitiateSearch(String searchQuery)
+    {
+    	uri = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=1a3a3ca0ceeb8f7934475f721d4dc2c4&text="+searchQuery+"&format=json&nojsoncallback=1";
         
 		mQueue = VolleySingleton.getInstance(this).getRequestQueue();
 		
@@ -89,10 +120,9 @@ public class SearchActivity extends Activity
         
 		mQueue.add(mReq);
     }
-    
     public void AfterGettingResponse(String picId)
     {
-    	uri = "https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key=fc16fa53fb09ca43f1e5a62a5e3669cd&photo_id=" + picId + "&format=json&nojsoncallback=1";
+    	uri = "https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key=1a3a3ca0ceeb8f7934475f721d4dc2c4&photo_id=" + picId + "&format=json&nojsoncallback=1";
     	
 		mReq = new JsonObjectRequest(Request.Method.GET, uri,null,new Response.Listener<JSONObject>() 
 		{
@@ -114,7 +144,7 @@ public class SearchActivity extends Activity
 					{
 						JSONObject myObj = offersJsonArray.getJSONObject(i);
 						FlickrActualPhoto fOffer = gson.fromJson(myObj.toString(),FlickrActualPhoto.class);
-						if(fOffer.label.equals("Thumbnail"))
+						if(fOffer.label.equals("Medium 800"))
 						{
 							ActualPhotosList.add(fOffer);
 						}
