@@ -19,6 +19,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -39,6 +40,7 @@ public class SearchActivity extends Activity
 	GridView gridview;
 	Button mBtnSearch;
 	EditText mQuery;
+	ProgressBar apiProgress;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) 
@@ -55,6 +57,8 @@ public class SearchActivity extends Activity
         
         mQuery = (EditText) findViewById(R.id.input_search_query);
         
+        apiProgress = (ProgressBar) findViewById(R.id.progressBar1);
+        
         mBtnSearch.setOnClickListener(new View.OnClickListener()
 		{
 			@Override
@@ -67,6 +71,7 @@ public class SearchActivity extends Activity
 				String searchString = mQuery.getText().toString();
 				InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.hideSoftInputFromWindow(mQuery.getWindowToken(), 0);
+				apiProgress.setProgress(TRIM_MEMORY_RUNNING_CRITICAL);
 				InitiateSearch(searchString);
 			}
 		});
@@ -152,6 +157,7 @@ public class SearchActivity extends Activity
 						}
 					}
 					
+					apiProgress.setProgress(TRIM_MEMORY_COMPLETE);
 			        gridview.setAdapter(new ImageAdapter(SearchActivity.this,ActualPhotosList));
 			        
 			        gridview.setOnItemClickListener(new OnItemClickListener()

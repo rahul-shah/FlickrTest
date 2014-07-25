@@ -50,6 +50,7 @@
 
         </RelativeLayout>
     </LinearLayout>
+
     
 	<GridView 
     android:id="@+id/gridview"
@@ -57,5 +58,12 @@
     android:layout_height="match_parent"
     android:verticalSpacing="5dp"
     android:gravity="center"/>
+	
+	
+	<ProgressBar
+	    android:id="@+id/progressBar1"
+	    style="?android:attr/progressBarStyleLarge"
+	    android:layout_width="214dp"
+	    android:layout_height="wrap_content" />
 
 	</LinearLayout>
